@@ -1,5 +1,6 @@
 package com.alura.literalura;
 
+import com.alura.literalura.service.ConsumoApiService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,7 +23,9 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("Hello World");
+		ConsumoApiService consumoApiService = new ConsumoApiService();
+		String json =  consumoApiService.obtenerDatos("https://gutendex.com/books/?page=2");
+		System.out.println(json);
 	}
 
 }
