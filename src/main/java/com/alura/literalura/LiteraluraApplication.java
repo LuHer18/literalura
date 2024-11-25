@@ -1,13 +1,19 @@
 package com.alura.literalura;
 
+import com.alura.literalura.repository.BookRepository;
 import com.alura.literalura.service.ConsumoApiService;
+import com.alura.literalura.vista.LiteraAluraVista;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class LiteraluraApplication implements CommandLineRunner {
+
+	@Autowired
+	BookRepository bookRepository;
 
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load();
@@ -23,9 +29,10 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ConsumoApiService consumoApiService = new ConsumoApiService();
-		String json =  consumoApiService.obtenerDatos("https://gutendex.com/books/?page=2");
-		System.out.println(json);
+
+		LiteraAluraVista literaAluraVista = new LiteraAluraVista(bookRepository);
+		literaAluraVista.getMenu();
+
 	}
 
 }
