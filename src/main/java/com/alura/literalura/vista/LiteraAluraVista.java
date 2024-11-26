@@ -15,6 +15,7 @@ import com.alura.literalura.service.ConvierteDatos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -70,10 +71,11 @@ public class LiteraAluraVista {
                     authorsList();
                     break;
                 case 4:
-                    System.out.println("lista...");
+                    System.out.println("lista de autores vivos en un determinado año");
                     break;
                 case 5:
-                    System.out.println("listica...");
+                    System.out.println("lista de libros por idioma\n");
+                    booksByLanguages();
                     break;
                 case 0:
                     System.out.println("Saliendo del sistema");
@@ -151,4 +153,22 @@ public class LiteraAluraVista {
         List<AuthorEntity> authorList = authorRepository.findAll();
         authorList.forEach(System.out::println);
     }
+
+    private void booksByLanguages(){
+        System.out.println("Escribe el idioma por el que quieres filtrar los libros: ");
+        String bookByLanguage = keyboard.nextLine();
+
+        List<BookEntity> booksLanguage  = bookRepository.findByLanguagesContainsIgnoreCase(bookByLanguage);
+
+        if (booksLanguage.size() < 1){
+            System.out.println("No se ha registrado un libro con este idioma");
+        }else{
+            System.out.println("Libros filtrados por el idioma: " + bookByLanguage + '\n');
+            System.out.println(booksLanguage);
+        }
+
+
+
+        }
+
 }

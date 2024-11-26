@@ -65,11 +65,11 @@ public class BookEntity {
 
     @Override
     public String toString() {
-        return "---------Libro --------------" +
-                ", title='" + title + '\'' +
-                ", downloadCount=" + downloadCount +
-                ", languages='" + languages + '\'' +
-                ", author=" + author +
-                "------------------------------";
+        return "---------Libro --------------\n" +
+                "Titulo: " + title + '\n' +
+                "Descargas: " + downloadCount + '\n' +
+                "Lenguaje: " + languages + '\n' +
+                "Autor: " + author.getName() + '\n' +
+                "------------------------------\n";
     }
 }
