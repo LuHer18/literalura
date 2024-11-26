@@ -13,10 +13,7 @@ import com.alura.literalura.service.ConsumoApiService;
 import com.alura.literalura.service.ConvierteDatos;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LiteraAluraVista {
@@ -55,35 +52,48 @@ public class LiteraAluraVista {
                     0 - salir
                 
                     """);
-            option = keyboard.nextInt();
-            keyboard.nextLine();
+            while (true) {
+                try {
+                    System.out.print("Introduce una opción: ");
+                    option = keyboard.nextInt();
+                    keyboard.nextLine();
+                    if (option >= 0 && option <= 5) {
+                        break;
+                    } else {
+                        System.out.println("Elija una opción válida (0-5).");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Entrada inválida. Por favor ingresa un número entero.");
+                    keyboard.nextLine();
+                }
+            }
 
-            switch (option){
+            switch (option) {
                 case 1:
                     searchBookByTitle();
                     break;
                 case 2:
-                    System.out.println("lista de libros\n");
+                    System.out.println("Lista de libros:\n");
                     bookList();
                     break;
                 case 3:
-                    System.out.println("lista de autores\n");
+                    System.out.println("Lista de autores:\n");
                     authorsList();
                     break;
                 case 4:
-                    System.out.println("lista de autores vivos en un determinado año");
+                    System.out.println("Lista de autores vivos en un determinado año:\n");
+                    authorListByYear();
                     break;
                 case 5:
-                    System.out.println("lista de libros por idioma\n");
+                    System.out.println("Lista de libros por idioma:\n");
                     booksByLanguages();
                     break;
                 case 0:
-                    System.out.println("Saliendo del sistema");
+                    System.out.println("Saliendo del sistema.");
                     break;
                 default:
-                    System.out.println("Elija una opcion valida");
+                    System.out.println("Elija una opción válida.");
                     break;
-
             }
 
         }
@@ -152,6 +162,31 @@ public class LiteraAluraVista {
     private void authorsList(){
         List<AuthorEntity> authorList = authorRepository.findAll();
         authorList.forEach(System.out::println);
+    }
+
+    private void authorListByYear(){
+        System.out.println("Por favor escribe un año para validar si hay actores que vivieron durante este periodo: ");
+        Integer year = null;
+
+        while (year == null){
+            try{
+                year = keyboard.nextInt();
+
+                List<AuthorEntity> authorByYearList = authorRepository.findAuthorsWithinYearRange(year);
+
+                if (authorByYearList.size() < 1){
+                    System.out.println("No se han registrado autores que hayan vivido en este periodo: " + year);
+                }else {
+                    System.out.println("Se han encontrado autores en el año: " + year + '\n');
+                    System.out.println(authorByYearList);
+                }
+            }catch (InputMismatchException e){
+                System.out.println("Escribe un año valido");
+                keyboard.nextLine();
+            }
+
+        }
+
     }
 
     private void booksByLanguages(){
