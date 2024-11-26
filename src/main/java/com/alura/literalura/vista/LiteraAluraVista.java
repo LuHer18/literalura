@@ -7,13 +7,14 @@ import com.alura.literalura.model.Book;
 import com.alura.literalura.model.BookEntity;
 import com.alura.literalura.model.Result;
 
+import com.alura.literalura.repository.AuthorRepository;
 import com.alura.literalura.repository.BookRepository;
 import com.alura.literalura.service.ConsumoApiService;
 import com.alura.literalura.service.ConvierteDatos;
 
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -23,13 +24,15 @@ public class LiteraAluraVista {
     private ConvierteDatos convierteDatos;
     private static final String BASE_URL = "https://gutendex.com/books/?";
     private BookRepository bookRepository;
+    private AuthorRepository authorRepository;
 
 
-    public LiteraAluraVista(BookRepository bookRepository) {
+    public LiteraAluraVista(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.keyboard = new Scanner(System.in);
         this.consumoApiService = new ConsumoApiService();
         this.convierteDatos = new ConvierteDatos();
         this.bookRepository = bookRepository;
+        this.authorRepository =authorRepository;
 
     }
 
@@ -45,7 +48,7 @@ public class LiteraAluraVista {
             System.out.println("""
                     1 - Buscar libro por titulo
                     2 - lista de libros registrados
-                    3 - lista de libros.
+                    3 - lista de autores.
                     4 - buscar autores vivos en un determinado año
                     5 - lista libros por idioma 
                     0 - salir
@@ -63,7 +66,8 @@ public class LiteraAluraVista {
                     bookList();
                     break;
                 case 3:
-                    System.out.println("lista");
+                    System.out.println("lista de autores\n");
+                    authorsList();
                     break;
                 case 4:
                     System.out.println("lista...");
@@ -103,26 +107,30 @@ public class LiteraAluraVista {
 
     private void saveBook(Book book){
         BookEntity bookToSave = new BookEntity();
-        AuthorEntity author = new AuthorEntity();
+        AuthorEntity author = authorRepository.findByNameContainsIgnoreCase(book.authors().get(0).name()).orElse(null);
 
-        bookToSave.setTitle(book.title());
-        bookToSave.setDownloadCount(book.downloadCount());
-        bookToSave.setLanguages(book.languages().get(0));
-
-        author.setName(book.authors().get(0).name());
-        author.setBirthYear(book.authors().get(0).birthYear());
-        author.setDeathYear(book.authors().get(0).deathYear());
-        author.setBook(bookToSave);
-
-
-        bookToSave.setAuthor(author);
-        Optional<BookEntity> isBookStoraged = bookRepository.findByTitleContainsIgnoreCase(bookToSave.getTitle());
-        if(isBookStoraged.isPresent()){
-            System.out.println("El libro ya se encuentra registrado");
-        }else {
-            bookRepository.save(bookToSave);
-            System.out.println("libro guardado");
+        if (author == null){
+            author = new AuthorEntity();
+            author.setName(book.authors().get(0).name());
+            author.setBirthYear(book.authors().get(0).birthYear());
+            author.setDeathYear(book.authors().get(0).deathYear());
         }
+        if( bookRepository.findByTitleContainsIgnoreCase(book.title()).isPresent()){
+            System.out.println("Este libro ya ha sido registrado");
+        }else{
+            bookToSave.setTitle(book.title());
+            bookToSave.setDownloadCount(book.downloadCount());
+            bookToSave.setLanguages(book.languages().get(0));
+            bookToSave.setAuthor(author);
+            if (author.getBooks() == null){
+                author.setBooks(new ArrayList<>());
+            }
+            author.getBooks().add(bookToSave);
+            authorRepository.save(author);
+            System.out.println("Registro exitoso");
+
+        }
+
 
 
     }
@@ -137,5 +145,10 @@ public class LiteraAluraVista {
                     .collect(Collectors.toList());
             bookDtos.forEach(System.out::println);
         }
+    }
+
+    private void authorsList(){
+        List<AuthorEntity> authorList = authorRepository.findAll();
+        authorList.forEach(System.out::println);
     }
 }

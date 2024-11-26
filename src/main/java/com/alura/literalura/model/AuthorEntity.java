@@ -3,6 +3,9 @@ package com.alura.literalura.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Entity
 @Table(name = "authors")
 public class AuthorEntity {
@@ -17,9 +20,8 @@ public class AuthorEntity {
 
     private String name;
 
-    @OneToOne
-    @JoinColumn(name = "book_id", referencedColumnName = "id")
-    private BookEntity book;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<BookEntity> books;
 
     public Integer getId() {
         return id;
@@ -53,20 +55,22 @@ public class AuthorEntity {
         this.name = name;
     }
 
-    public BookEntity getBook() {
-        return book;
+    public List<BookEntity> getBooks() {
+        return books;
     }
 
-    public void setBook(BookEntity book) {
-        this.book = book;
+
+    public void setBooks(List<BookEntity> books) {
+        this.books = books;
     }
+
+
 
     @Override
     public String toString() {
-        return "------------Autor---------------" + '\n' +
-                "Año de nacimiento: " + birthYear + '\n' +
-                ", Año de muerte: " + deathYear + '\n' +
-                ", Nombre: '" + name + '\'' + '\n' +
-                "----------------------------------";
+        return "Nombre: " + name + '\n' +
+                "Fecha de nacimiento: " + birthYear + '\n' +
+                "Fecha de muerte: " + deathYear + '\n' +
+                "Libros: " + books.stream().map(bookEntity -> bookEntity.getTitle()).collect(Collectors.joining(" - ")) + '\n';
     }
 }

@@ -1,5 +1,6 @@
 package com.alura.literalura;
 
+import com.alura.literalura.repository.AuthorRepository;
 import com.alura.literalura.repository.BookRepository;
 import com.alura.literalura.service.ConsumoApiService;
 import com.alura.literalura.vista.LiteraAluraVista;
@@ -14,6 +15,9 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Autowired
 	BookRepository bookRepository;
+
+	@Autowired
+	AuthorRepository authorRepository;
 
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load();
@@ -30,7 +34,7 @@ public class LiteraluraApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		LiteraAluraVista literaAluraVista = new LiteraAluraVista(bookRepository);
+		LiteraAluraVista literaAluraVista = new LiteraAluraVista(bookRepository, authorRepository);
 		literaAluraVista.getMenu();
 
 	}

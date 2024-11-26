@@ -15,6 +15,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Integer> {
     Optional<BookEntity>  findByTitleContainsIgnoreCase(String title);
 
     @Query(value = """
-            SELECT  b.title as titulo, b.download_count as descargas, b.languages as lenguaje, a.name as autor FROM books b INNER JOIN authors a ON b.id = a.book_id""", nativeQuery = true)
+            SELECT  b.title as titulo, b.download_count as descargas, b.languages as lenguaje, a.name as autor FROM books b INNER JOIN authors a ON b.author_id = a.id""", nativeQuery = true)
     List<BookProjection> findBooks();
 }

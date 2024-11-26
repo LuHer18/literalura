@@ -19,7 +19,8 @@ public class BookEntity {
 
     private String languages;
 
-    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     private AuthorEntity author;
 
     public Integer getId() {
